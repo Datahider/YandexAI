@@ -1,0 +1,22 @@
+{
+    "name": "losthost/yandex-ai",
+    "description": "API for accessing Yandex AI Studio services",
+    "authors": [
+        {
+            "name": "drweb",
+            "email": "pio@pio.su"
+        }
+    ],
+    "require": {
+        "web-token/jwt-framework": "4.0.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "11.5.43"
+    },
+    "autoload": {
+        "psr-4": {
+            "losthost\\YandexAI\\": "src/",
+            "losthost\\YandexAI\\Test\\": "test\\"
+        }
+    }
+}

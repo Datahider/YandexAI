@@ -1,0 +1,8 @@
+/etc/
+/vendor/
+/nbproject/
+/test/image.jpg
+/test/secrets.php
+/test/token.json
+/test/authkey.json
+/test/.phpunit.result.cache
