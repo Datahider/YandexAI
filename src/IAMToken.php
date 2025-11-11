@@ -50,9 +50,10 @@ class IAMToken {
     public function get() {
         
         $now = time();
-
-        $iam_token_json = file_get_contents($this->iam_token_path);
-        if ($iam_token_json) {
+        $iam_token_json = null;
+        
+        if (file_exists($this->iam_token_path)) {
+            $iam_token_json = file_get_contents($this->iam_token_path);
             $iam_token = json_decode($iam_token_json);
             $token_created = $iam_token->created;
             $token_data = $iam_token->data;
