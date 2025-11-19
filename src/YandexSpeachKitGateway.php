@@ -20,7 +20,7 @@ class YandexSpeachKitGateway extends YandexAbstractGateway {
         return $result->result;
     }
     
-    public function recognizeAsync(string $bytes) : Operation {
+    public function recognizeAsync(string $bytes) : ?Operation {
         
         $request = [
             'content' => base64_encode($bytes),
@@ -29,7 +29,7 @@ class YandexSpeachKitGateway extends YandexAbstractGateway {
                 'audioFormat' => [
                     'containerAudio' => [
                         'containerAudioType' => 'OGG_OPUS'
-                    ]
+                    ],
                 ]
             ]
         ];
@@ -43,10 +43,46 @@ class YandexSpeachKitGateway extends YandexAbstractGateway {
         ];
         $url = 'https://stt.api.cloud.yandex.net/stt/v3/recognizeFileAsync';
         
-        return Operation::fromResponse($this->post($url, $request, $headers));
+        $result = $this->postJson($url, $request, $headers);
+        if (!$result["error"]) {
+            return Operation::fromResponse($result["response"]);
+        }
+        return null;
+    }
+
+    public function recognizeSync(string $bytes, bool $refine=true) : string {
+        
+        $operation = $this->recognizeAsync($bytes);
+        $operation->wait();
+        return $this->getRecognitionResult($operation, $refine);
+        
     }
     
-    public function wait(Operation $operation) {
+    public function getRecognitionResult(Operation $operation, bool $refine=true) : string {
         
+        $url = 'https://stt.api.cloud.yandex.net/stt/v3/getRecognition';
+        
+        $token = new IAMToken();
+        $headers = [
+            "Content-Type: application/json",
+            "Authorization: Bearer ". $token->get(),
+            "x-folder-id: $this->folder_id",
+            "x-data-logging-enabled: true",
+        ];
+
+        $result = $this->get($url, ['operationId' => $operation->getId()], $headers);
+        
+        if (!$result['error']) {
+            $lines = array_filter(explode("\n", $result['response']));
+            if ($refine) {
+                $response = json_decode($lines[1]);
+                return $response->result->finalRefinement->normalizedText->alternatives[0]->text;
+            } else {
+                $response = json_decode($lines[0]);
+                return $response->result->final->alternatives[0]->text;
+            }
+        }
+        
+        return null;
     }
 }

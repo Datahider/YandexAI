@@ -15,7 +15,7 @@ class OperationError {
         if (is_string($input)) {
             $decoded = json_decode($input);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new InvalidArgumentException("Invalid JSON string");
+                throw new \InvalidArgumentException("Invalid JSON string");
             }
             $this->data = $decoded;
         } elseif (is_array($input)) {
@@ -23,7 +23,7 @@ class OperationError {
         } elseif ($input instanceof stdClass) {
             $this->data = $input;
         } else {
-            throw new InvalidArgumentException("Unsupported input type");
+            throw new \InvalidArgumentException("Unsupported input type");
         }
     }
 
