@@ -7,7 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/Tests/PHPUnitConfigurat
 <phpunit colors="false">
     <source>
         <include>
-            <directory suffix=".php">../bot/</directory>
+            <directory suffix=".php">../src/</directory>
         </include>
     </source>
 </phpunit>
