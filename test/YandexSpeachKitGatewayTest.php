@@ -38,4 +38,13 @@ class YandexSpeachKitGatewayTest extends TestCase {
         $this->assertEquals('раз два три четыре пять вышел зайчик погулять', $text);
     }
     
+    public function testPause() {
+        global $folder_id;
+        
+        $sst = new YandexSpeachKitGateway($folder_id);
+        $text = $sst->recognizeSync(file_get_contents('with_pause.ogg'));
+        $this->assertEquals('например создать отдельный топик который будет называться баланс и собственно сумма баланса тогда каждый тот кому нужно может закрепить этот топик наверху группы и видеть баланс а кому не нужно для тех он уедет вниз и все', 
+                $text);
+    }
+    
 }
