@@ -74,14 +74,18 @@ class YandexSpeachKitGateway extends YandexAbstractGateway {
         
         if (!$result['error']) {
             $lines = array_filter(explode("\n", $result['response']));
-            $last = count($lines)-1;
-            if ($refine) {
-                $response = json_decode($lines[$last-1]);
-                return $response->result->finalRefinement->normalizedText->alternatives[0]->text;
-            } else {
-                $response = json_decode($lines[$last-2]);
-                return $response->result->final->alternatives[0]->text;
+            
+            $result_array = [];
+            foreach ($lines as $line) {
+                $response = json_decode($line);
+                if ($refine && isset($response->result->finalRefinement)) {
+                    $result_array[] = $response->result->finalRefinement->normalizedText->alternatives[0]->text;
+                } elseif (!$refine && isset($response->result->final)) {
+                    $result_array[] = $response->result->final->alternatives[0]->text;
+                }
             }
+            
+            return implode("\n\n", $result_array);
         }
         
         return null;
